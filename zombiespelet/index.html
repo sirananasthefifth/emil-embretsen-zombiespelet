@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main game</title>
+</head>
+<body>
+    <script src="simple.js">
+
+        //Zombie variables
+        var zombies = [];
+        var i = 0;
+        var numberOfZombies = 10;
+        var zombieSpeedMax = 3;
+        var zombieSpeedMin = 1;
+        while (i < numberOfZombies) {
+            zombies.push({  x: 0, y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100});
+            i++;
+        }
+        
+        //Player one variable
+        var player1Speed = 7;
+        var player1 = {x: totalWidth / 2 , y: totalHeight/2 , speed: player1Speed, health: 100};
+
+        //Bullet varibales
+        var bullets = [];
+        var bulletSpeed = 10;
+        var numberOfBullets = 1000;
+        while (i < numberOfBullets) {
+            bullets.push({x: player1.x, y: player1.y, size: 5, speed: bulletSpeed});
+            i++;
+        }
+        
+
+        //Main update function
+        function update()
+        {
+            clearScreen();
+
+            //Drawing the map  
+            rectangle(400, 0, 50,200, "brown");
+            rectangle(400, 200, 200,50, "brown");
+            rectangle(totalWidth-200, totalHeight-100, 50,100, "brown");
+
+            //Player one controls
+            picture(player1.x, player1.y, "img/player1.png"); //bild på karaktär
+            if (keyboard.w) {player1.y -= player1.speed;}   //Make character go up
+            if (keyboard.s) {player1.y += player1.speed;}   //Make character go down
+            if (keyboard.a) {player1.x -= player1.speed;}   //Make character go left
+            if (keyboard.d) {player1.x += player1.speed;}   //Make character go right
+
+            //Player 1 Health-bar
+            rectangle(player1.x - 20, player1.y - 20, 100, 10, "grey"); //Health bar grey background
+            rectangle(player1.x - 20, player1.y - 20, player1.health, 10, "green"); //Green health bar
+
+            //Gun
+            picture(player1.x-30, player1.y+65, "img/gun.png");
+
+            //Bounds
+            if (player1.x + 30 > totalWidth) {player1.x -= player1.speed;}  //x-bounds
+            if (player1.x < 0) {player1.x += player1.speed;}                //x-bounds
+            if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;} //y-bounds
+            if (player1.y + 20 < 0) {player1.y += player1.speed;}           //y-bounds
+
+            
+
+            
+                
+                
+
+            var i = 0;
+            while (i < numberOfZombies)
+            {
+                
+                //Zombbies
+                var zombie = zombies[i];
+            
+                picture(zombie.x, zombie.y, "img/zombie.png"); //Bild på zombie
+
+                
+                
+                //Zombie movements
+                if (zombie.x < player1.x){
+                    zombie.x += zombie.speed;
+
+                }
+                else {
+                    zombie.x -= zombie.speed;
+                }
+                if (zombie.y < player1.y){
+                    zombie.y += zombie.speed;
+                }
+                else {
+                    zombie.y -= zombie.speed;
+                }
+
+                //Zombie Health-bar
+                rectangle(zombie.x - 20, zombie.y - 20, 100, 10, "grey"); //Health bar grey background
+                rectangle(zombie.x - 20, zombie.y - 20, zombie.health, 10, "green"); //Green health bar
+
+                //If loop för att spelaren ska skada zombie när spelaren kommer för nära
+                if (distance(player1 , zombie) < 35)
+                {
+                    zombie.health -= 5;
+                }
+
+                //If loop för att zombies ska skada spelaren när spelaren kommer för nära
+                if (distance(player1 , zombie) < 35)
+                {
+                    player1.health -= 1;
+                    playSound("sfx/player_ouch.mp3", 1);
+                }
+
+                //Game over när player 1 health är noll eller mindre
+                if (player1.health <= 0)
+                {
+                    
+                    stopUpdate();
+                }
+
+                
+                i++;
+            }
+        }
+
+    </script>
+<!--<img width="500px" src="https://thumbs.dreamstime.com/b/cartoon-racing-map-game-49708152.jpg">-->
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+<body>
+    <script src="simple.js">
+
+        //Zombie variables
+        var zombies = [];
+        var i = 0;
+        var numberOfZombies = 10;
+        var zombieSpeedMax = 3;
+        var zombieSpeedMin = 1;
+        while (i < numberOfZombies) {
+            zombies.push({  x: 0, y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100});
+            i++;
+        }
+        
+        //Player one variable
+        var player1Speed = 10;
+        var player1 = {x: totalWidth / 2 , y: totalHeight/2 , speed: player1Speed, health: 100};
+
+        //Bullet varibales
+        var bullets = [];
+        var bulletSpeed = 10;
+        var numberOfBullets = 1000;
+        while (i < numberOfBullets) {
+            bullets.push({x: player1.x, y: player1.y, size: 5, speed: bulletSpeed});
+            i++;
+        }
+        
+
+        //Main update function
+        function update()
+        {
+            clearScreen();
+
+            //Drawing the map
+                
+            rectangle(400, 0, 50,200, "black");
+                rectangle(400, 200, 200,50, "black");
+                rectangle(totalWidth-200, totalHeight-100, 50,100, "black");
+
+            //player one controls
+            picture(player1.x, player1.y, "img/player1.png");
+                if (keyboard.w) {player1.y -= player1.speed;}
+                if (keyboard.s) {player1.y += player1.speed;}
+                if (keyboard.a) {player1.x -= player1.speed;}
+                if (keyboard.d) {player1.x += player1.speed;}
+
+                //Bounds
+                //x-bounds
+                if (player1.x + 30 > totalWidth) {player1.x -= player1.speed;}
+                if (player1.x < 0) {player1.x += player1.speed;}
+                //y-bounds
+                if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;}
+                if (player1.y + 20 < 0) {player1.y += player1.speed;}
+
+                
+
+                //Gun
+                picture(player1.x-30, player1.y+65, "img/gun.png");
+                
+                
+                
+
+                
+
+            var i = 0;
+            while (i < numberOfZombies)
+            {
+                
+                
+                //Zombbies
+                var zombie = zombies[i];
+            
+                picture(zombie.x, zombie.y, "img/zombie.png");
+
+                
+                
+                //Zombie movements
+                if (zombie.x < player1.x){
+                    zombie.x += zombie.speed;
+
+                }
+                else {
+                    zombie.x -= zombie.speed;
+                }
+                if (zombie.y < player1.y){
+                    zombie.y += zombie.speed;
+                }
+                else {
+                    zombie.y -= zombie.speed;
+                }
+
+                
+
+                //Game over when zombie touches player
+                /*if (distance(player1 , zombie) < 35)
+                {
+                    alert("Game over");
+                    stopUpdate();
+                }*/
+                i++;
+            }
+        }
+
+    </script>
+<!--<img width="500px" src="https://thumbs.dreamstime.com/b/cartoon-racing-map-game-49708152.jpg">-->
+
+</body>
+</html>
