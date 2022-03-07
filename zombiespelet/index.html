@@ -9,6 +9,8 @@
 <body>
     <script src="simple.js">
 
+        preloadSound("sfx/player_ouch.mp3");
+
         //Zombie variables
         var zombies = [];
         var i = 0;
@@ -16,22 +18,16 @@
         var zombieSpeedMax = 3;
         var zombieSpeedMin = 1;
         while (i < numberOfZombies) {
-            zombies.push({  x: 0, y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100});
+            zombies.push({  x: 0, y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100 , alive: true});
             i++;
         }
         
         //Player one variable
-        var player1Speed = 7;
+        var player1Speed = 13;
+        var player1Points = 0;
         var player1 = {x: totalWidth / 2 , y: totalHeight/2 , speed: player1Speed, health: 100};
 
-        //Bullet varibales
-        var bullets = [];
-        var bulletSpeed = 10;
-        var numberOfBullets = 1000;
-        while (i < numberOfBullets) {
-            bullets.push({x: player1.x, y: player1.y, size: 5, speed: bulletSpeed});
-            i++;
-        }
+        
         
 
         //Main update function
@@ -40,9 +36,16 @@
             clearScreen();
 
             //Drawing the map  
+            fill(mixColor(40, 0, 0));
             rectangle(400, 0, 50,200, "brown");
             rectangle(400, 200, 200,50, "brown");
+
+            //Rectengle 1
             rectangle(totalWidth-200, totalHeight-100, 50,100, "brown");
+            if (player1.x + 30 == totalWidth-150 && keyboard.a && player1.y + 110 > totalHeight-100) {player1.x += player1.speed;}                      //right side bound
+            if (player1.x + 50 > totalWidth-200 && keyboard.d && player1.y + 110 > totalHeight-100) {player1.x -= player1.speed;}                       //left side bound
+            if (player1.y + 110 > totalHeight-100 && player1.x + 30 > totalWidth-200 && player1.x + 30 < totalWidth-150) {player1.y -= player1.speed;}  //Top bound
+
 
             //Player one controls
             picture(player1.x, player1.y, "img/player1.png"); //bild på karaktär
@@ -55,14 +58,26 @@
             rectangle(player1.x - 20, player1.y - 20, 100, 10, "grey"); //Health bar grey background
             rectangle(player1.x - 20, player1.y - 20, player1.health, 10, "green"); //Green health bar
 
-            //Gun
-            picture(player1.x-30, player1.y+65, "img/gun.png");
+            //Player 1 points
+            text(totalWidth - 450, 70, 30, "Player 1 kills: " + player1Points, "yellow");
 
-            //Bounds
-            if (player1.x + 30 > totalWidth) {player1.x -= player1.speed;}  //x-bounds
-            if (player1.x < 0) {player1.x += player1.speed;}                //x-bounds
-            if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;} //y-bounds
-            if (player1.y + 20 < 0) {player1.y += player1.speed;}           //y-bounds
+            //Sword
+            if (keyboard.space)
+            {
+                picture(player1.x-50, player1.y+75, "img/sword_woosh.png");
+            }
+            else
+            {
+                picture(player1.x-50, player1.y+43, "img/sword.png");
+            }
+            
+
+
+            //Screen Bounds
+            if (player1.x + 50 > totalWidth) {player1.x -= player1.speed;}  //left x-bounds
+            if (player1.x < 0) {player1.x += player1.speed;}                //right x-bounds
+            if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;} //bottom y-bounds
+            if (player1.y + 20 < 0) {player1.y += player1.speed;}           //top y-bounds
 
             
 
@@ -77,47 +92,53 @@
                 //Zombbies
                 var zombie = zombies[i];
             
-                picture(zombie.x, zombie.y, "img/zombie.png"); //Bild på zombie
+                if (zombie.alive) //allt inom if loopen ska ändas ske ifall zombien i fråga är vid liv
+                {
+                    picture(zombie.x, zombie.y, "img/zombie.png"); //Bild på zombie
+
+                    //If loop för att spelaren ska skada zombie när spelaren kommer för nära
+                    if (distance(player1 , zombie) < 70 && keyboard.space)
+                    {
+                        zombie.health -= 10;
+                    }
+
+                    if (zombie.health <= 0)
+                    {
+                        zombie.alive = false;
+                        player1Points += 1;
+                    }
+
+                    //Zombie movements
+                    if (zombie.x < player1.x){zombie.x += zombie.speed;}    //if the player is to the right of the zombie they will move to the right
+                    else {zombie.x -= zombie.speed;}                        //if not they will move to the left
+                    if (zombie.y < player1.y){zombie.y += zombie.speed;}    //if the player is below the zombie they will move down
+                    else {zombie.y -= zombie.speed;}                        //if not they will move up
+
+                    //Zombie Health-bar
+                    rectangle(zombie.x - 20, zombie.y - 20, 100, 10, "grey");               //Health bar grey background
+                    rectangle(zombie.x - 20, zombie.y - 20, zombie.health, 10, "green");    //Green health bar with zombie health as length
+
+                    
+
+                    //If loop för att zombies ska skada spelaren när spelaren kommer för nära
+                    if (distance(player1 , zombie) < 35)
+                    {
+                        player1.health -= 1;
+                         
+                    }
+                }
+                
 
                 
                 
-                //Zombie movements
-                if (zombie.x < player1.x){
-                    zombie.x += zombie.speed;
-
-                }
-                else {
-                    zombie.x -= zombie.speed;
-                }
-                if (zombie.y < player1.y){
-                    zombie.y += zombie.speed;
-                }
-                else {
-                    zombie.y -= zombie.speed;
-                }
-
-                //Zombie Health-bar
-                rectangle(zombie.x - 20, zombie.y - 20, 100, 10, "grey"); //Health bar grey background
-                rectangle(zombie.x - 20, zombie.y - 20, zombie.health, 10, "green"); //Green health bar
-
-                //If loop för att spelaren ska skada zombie när spelaren kommer för nära
-                if (distance(player1 , zombie) < 35)
-                {
-                    zombie.health -= 5;
-                }
-
-                //If loop för att zombies ska skada spelaren när spelaren kommer för nära
-                if (distance(player1 , zombie) < 35)
-                {
-                    player1.health -= 1;
-                    playSound("sfx/player_ouch.mp3", 1);
-                }
+                
 
                 //Game over när player 1 health är noll eller mindre
                 if (player1.health <= 0)
                 {
-                    
-                    stopUpdate();
+                    playSound("sfx/player_ouch.mp3", 1);                                    //Ouch sound effect
+                    text(totalWidth / 2 - 210, totalHeight/2, 60, "GAME OVER", "yellow");   //Game over text
+                    stopUpdate();                                                           //Avslutar update funktionen
                 }
 
                 
