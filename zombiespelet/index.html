@@ -4,150 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Meny</title>
 </head>
 <body>
-    <script src="simple.js">
+    
 
-        preloadSound("sfx/player_ouch.mp3");
-
-        //Zombie variables
-        var zombies = [];
-        var i = 0;
-        var numberOfZombies = 10;
-        var zombieSpeedMax = 3;
-        var zombieSpeedMin = 1;
-        while (i < numberOfZombies) {
-            zombies.push({  x: 0, y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100 , alive: true});
-            i++;
-        }
-        
-        //Player one variable
-        var player1Speed = 13;
-        var player1Points = 0;
-        var player1 = {x: totalWidth / 2 , y: totalHeight/2 , speed: player1Speed, health: 100};
-
-        
-        
-
-        //Main update function
-        function update()
-        {
-            clearScreen();
-
-            //Drawing the map  
-            fill(mixColor(40, 0, 0));
-            rectangle(400, 0, 50,200, "brown");
-            rectangle(400, 200, 200,50, "brown");
-
-            //Rectengle 1
-            rectangle(totalWidth-200, totalHeight-100, 50,100, "brown");
-            if (player1.x + 30 == totalWidth-150 && keyboard.a && player1.y + 110 > totalHeight-100) {player1.x += player1.speed;}                      //right side bound
-            if (player1.x + 50 > totalWidth-200 && keyboard.d && player1.y + 110 > totalHeight-100) {player1.x -= player1.speed;}                       //left side bound
-            if (player1.y + 110 > totalHeight-100 && player1.x + 30 > totalWidth-200 && player1.x + 30 < totalWidth-150) {player1.y -= player1.speed;}  //Top bound
-
-
-            //Player one controls
-            picture(player1.x, player1.y, "img/player1.png"); //bild på karaktär
-            if (keyboard.w) {player1.y -= player1.speed;}   //Make character go up
-            if (keyboard.s) {player1.y += player1.speed;}   //Make character go down
-            if (keyboard.a) {player1.x -= player1.speed;}   //Make character go left
-            if (keyboard.d) {player1.x += player1.speed;}   //Make character go right
-
-            //Player 1 Health-bar
-            rectangle(player1.x - 20, player1.y - 20, 100, 10, "grey"); //Health bar grey background
-            rectangle(player1.x - 20, player1.y - 20, player1.health, 10, "green"); //Green health bar
-
-            //Player 1 points
-            text(totalWidth - 450, 70, 30, "Player 1 kills: " + player1Points, "yellow");
-
-            //Sword
-            if (keyboard.space)
-            {
-                picture(player1.x-50, player1.y+75, "img/sword_woosh.png");
-            }
-            else
-            {
-                picture(player1.x-50, player1.y+43, "img/sword.png");
-            }
-            
-
-
-            //Screen Bounds
-            if (player1.x + 50 > totalWidth) {player1.x -= player1.speed;}  //left x-bounds
-            if (player1.x < 0) {player1.x += player1.speed;}                //right x-bounds
-            if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;} //bottom y-bounds
-            if (player1.y + 20 < 0) {player1.y += player1.speed;}           //top y-bounds
-
-            
-
-            
-                
-                
-
-            var i = 0;
-            while (i < numberOfZombies)
-            {
-                
-                //Zombbies
-                var zombie = zombies[i];
-            
-                if (zombie.alive) //allt inom if loopen ska ändas ske ifall zombien i fråga är vid liv
-                {
-                    picture(zombie.x, zombie.y, "img/zombie.png"); //Bild på zombie
-
-                    //If loop för att spelaren ska skada zombie när spelaren kommer för nära
-                    if (distance(player1 , zombie) < 70 && keyboard.space)
-                    {
-                        zombie.health -= 10;
-                    }
-
-                    if (zombie.health <= 0)
-                    {
-                        zombie.alive = false;
-                        player1Points += 1;
-                    }
-
-                    //Zombie movements
-                    if (zombie.x < player1.x){zombie.x += zombie.speed;}    //if the player is to the right of the zombie they will move to the right
-                    else {zombie.x -= zombie.speed;}                        //if not they will move to the left
-                    if (zombie.y < player1.y){zombie.y += zombie.speed;}    //if the player is below the zombie they will move down
-                    else {zombie.y -= zombie.speed;}                        //if not they will move up
-
-                    //Zombie Health-bar
-                    rectangle(zombie.x - 20, zombie.y - 20, 100, 10, "grey");               //Health bar grey background
-                    rectangle(zombie.x - 20, zombie.y - 20, zombie.health, 10, "green");    //Green health bar with zombie health as length
-
-                    
-
-                    //If loop för att zombies ska skada spelaren när spelaren kommer för nära
-                    if (distance(player1 , zombie) < 35)
-                    {
-                        player1.health -= 1;
-                         
-                    }
-                }
-                
-
-                
-                
-                
-
-                //Game over när player 1 health är noll eller mindre
-                if (player1.health <= 0)
-                {
-                    playSound("sfx/player_ouch.mp3", 1);                                    //Ouch sound effect
-                    text(totalWidth / 2 - 210, totalHeight/2, 60, "GAME OVER", "yellow");   //Game over text
-                    stopUpdate();                                                           //Avslutar update funktionen
-                }
-
-                
-                i++;
-            }
-        }
-
-    </script>
-<!--<img width="500px" src="https://thumbs.dreamstime.com/b/cartoon-racing-map-game-49708152.jpg">-->
+    <h1>Välkommen till Zombiespelet!</h1>
+    <a href="zombiespelet.html">Spela spelet</a>
+    <br>
+    <a>Kontroller</a>
 
 </body>
 </html>
