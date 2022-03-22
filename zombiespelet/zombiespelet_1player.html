@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main game</title>
+    <title>1 spelare</title>
 </head>
 <body>
     <script src="simple.js">
@@ -19,6 +19,7 @@
         var numberOfZombies = 25; //Antalet zombies som kommer skapas
         var zombieSpeedMax = 3;   //Max speed zombies kan ha
         var zombieSpeedMin = 1;   //min speed zombies kan ha
+        zombieDamage = 1; //hur mycket damage zombie gör
         var i = 0;
         while (i < numberOfZombies) //While loop som pushar ett antal zombies in i en lista
         {
@@ -275,8 +276,10 @@
                         while (i2 < 25) //While loop som pushar nästa wave zombies in i en lista
                         {
                             zombies.push({  x: random(totalWidth), y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100 , alive: true});
+                            
                             i2++;
                         }
+                        zombieDamage *= 1.05; //Gör så att zombies skadar mer varje runda
                         waveNumber += 1; //gör så att nästa wave presenteras som rätt wave
                     }
 
@@ -295,7 +298,7 @@
                     //If loop för att zombies ska skada spelaren när spelaren kommer för nära
                     if (distance(player1 , zombie) < 35)
                     {
-                        player1.health -= 1;
+                        player1.health -= zombieDamage;
                             
                     }
             }

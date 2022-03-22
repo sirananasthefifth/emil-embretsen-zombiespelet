@@ -8,6 +8,18 @@ h1 {
     color: yellow;
     font-size: 60px;
 }
+
+h3 {
+    color: yellow;
+    font-size: 40px;
+}
+
+p {
+    color: yellow;
+    font-size: 30px;
+    margin: 25px;
+}
+
 a {
     color: yellow;
     font-size: 35px;
@@ -25,4 +37,24 @@ a {
 }
 a:hover {
     background-color: rgba(136, 134, 0, 0.438);
+}
+
+.main-container {
+    display: flex;
+    
+}
+
+.player-container {
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.control-container {
+    display: flex;
+    align-items: center;
+    padding: 30px;
 }

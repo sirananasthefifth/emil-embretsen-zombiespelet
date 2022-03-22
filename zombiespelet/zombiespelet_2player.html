@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main game</title>
+    <title>2 spelare</title>
 </head>
 <body>
     <script src="simple.js">
@@ -19,6 +19,7 @@
         var numberOfZombies = 25; //Antalet zombies som kommer skapas
         var zombieSpeedMax = 3;   //Max speed zombies kan ha
         var zombieSpeedMin = 1;   //min speed zombies kan ha
+        zombieDamage = 1; //hur mycket damage zombie gör
         var i = 0;
         while (i < numberOfZombies) //While loop som pushar ett antal zombies in i en lista
         {
@@ -48,7 +49,8 @@
 
         //Regular sword variable
         var swordAlive = true;
-        var swordTime = 0;
+        var swordTime1 = 0;
+        var swordTime2 = 0;
 
         //Fire sword powerup variables
         var fireSword = {x: random(100, totalWidth-100) , y: random(100, totalHeight-100), alive: true, equipped: false};
@@ -77,6 +79,20 @@
             if (player1.x < 0) {player1.x += player1.speed;}                //right x-bounds
             if (player1.y + 90 > totalHeight) {player1.y -= player1.speed;} //bottom y-bounds
             if (player1.y + 20 < 0) {player1.y += player1.speed;}           //top y-bounds
+
+            //Collision för top right rektangels för player 2
+            if (player2.x + 60 > 400 && player2.x + 60 < 450  && player2.y < 200) {player2.x -= player2.speed;}                         //Collision left side
+            if (player2.x > 400 && player2.x  < 450  && player2.y < 200) {player2.x += player2.speed;}                                  //Collision inner right side
+            if (player2.x > 400 && player2.x  < 600  && player2.y < 200 && player2.y +60 > 150) {player2.x += player2.speed;}           //Collision right side
+            if (player2.y < 250 && player2.y > 200 && player2.x +60 > 400 && player2.x < 600 ) {player2.y += player2.speed;}            //Collision bottom side
+            if (player2.y + 120 < 250 && player2.y + 120 > 200 && player2.x > 400 && player2.x < 600 ) {player2.y -= player2.speed;}    //Collision top
+
+            //Outer Screen Bounds for player 1
+            if (player2.x + 50 > totalWidth) {player2.x -= player2.speed;}  //left x-bounds
+            if (player2.x < 0) {player2.x += player2.speed;}                //right x-bounds
+            if (player2.y + 90 > totalHeight) {player2.y -= player2.speed;} //bottom y-bounds
+            if (player2.y + 20 < 0) {player2.y += player2.speed;}           //top y-bounds
+
 
             //Med kit powerup
             if (medKit.alive && medKit.taken == false) //Rita ut medkit ifall medkit.alive är sant
@@ -145,20 +161,20 @@
                 if(swordAlive) //När vanligt svärd används
                 {
                     
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (keyboard.space && swordTime1 < 5) //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player1.x + 50 , player1.y+75, "img/sword_woosh_right.png");//Visa svärdet som svingat
                         playSound("sfx/sword_woosh.wav", 0.2);//Spela ljud
-                        swordTime ++; //Öka cooldown
+                        swordTime1 ++; //Öka cooldown
                     }
                     else if (keyboard.space)//Om annars mellanslag är nedtryckt
                     {
-                        swordTime ++; //Öka cooldown 
+                        swordTime1 ++; //Öka cooldown 
                         picture(player1.x + 50, player1.y+43, "img/sword_right.png"); //visa svärdet som vilande
                     }
                     else //annars
                     {
-                        swordTime = 0; //Öka cooldown
+                        swordTime1 = 0; //Öka cooldown
                         picture(player1.x + 50, player1.y+43, "img/sword_right.png"); //visa svärdet som vilande
                     }
                 }
@@ -166,20 +182,20 @@
                 //Fire Sword
                 if (fireSword.equipped) //när eldsvärdet är equipped
                 {
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (keyboard.space && swordTime1 < 5) //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player1.x + 50, player1.y+75, "img/fire_sword_woosh_right.png");   //Visa svärdet som svingat
                         playSound("sfx/fire_sword_woosh.mp3", 1);                               //Spela ljud
-                        swordTime++;                                                            //Öka cooldown
+                        swordTime1++;                                                            //Öka cooldown
                     }
                     else if (keyboard.space)            //Om annars mellanslag är nedtryckt
                     {
-                        swordTime++;                                                            //Öka cooldown   
+                        swordTime1++;                                                            //Öka cooldown   
                         picture(player1.x + 50, player1.y+43, "img/fire_sword_right.png");         //visa svärdet som vilande
                     }
                     else        //annars
                     {
-                        swordTime = 0;      //reset cooldown
+                        swordTime1 = 0;      //reset cooldown
                         picture(player1.x + 50, player1.y+43, "img/fire_sword_right.png"); //Visa svärdet som vilande
                     }
                 }
@@ -192,20 +208,20 @@
                 //Default Sword
                 if (swordAlive )//när vanligt svärd är equipped
                 {
-                    if (keyboard.space && swordTime < 5)  //om space är nedtryckt och cooldown inte skett
+                    if (keyboard.space && swordTime1 < 5)  //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player1.x-50, player1.y+75, "img/sword_woosh_left.png"); //Visa svärdet som svingat
                         playSound("sfx/sword_woosh.wav", 0.2); //Spela ljud
-                        swordTime++; //Öka cooldown
+                        swordTime1++; //Öka cooldown
                     }
                     else if (keyboard.space) //Om annars mellanslag är nedtryckt
                     {
-                        swordTime++; //Öka cooldown
+                        swordTime1++; //Öka cooldown
                         picture(player1.x-50, player1.y+43, "img/sword_left.png");//visa svärdet som vilande
                     }
                     else //Ananrs
                     {
-                        swordTime = 0; //reset cooldown
+                        swordTime1= 0; //reset cooldown
                         picture(player1.x-50, player1.y+43, "img/sword_left.png");//visa svärdet som vilande
                     }
                 }
@@ -213,20 +229,20 @@
                 //Fire Sword
                 if (fireSword.equipped) //när eldsvärdet är equipped
                 {
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (keyboard.space && swordTime1 < 5) //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player1.x-50, player1.y+75, "img/fire_sword_woosh_left.png");   //Visa svärdet som svingat
                         playSound("sfx/fire_sword_woosh.mp3", 1);                               //Spela ljud
-                        swordTime++;                                                            //Öka cooldown
+                        swordTime1++;                                                            //Öka cooldown
                     }
                     else if (keyboard.space)            //Om annars mellanslag är nedtryckt
                     {
-                        swordTime++;                                                            //Öka cooldown   
+                        swordTime1++;                                                            //Öka cooldown   
                         picture(player1.x-50, player1.y+43, "img/fire_sword_left.png");         //visa svärdet som vilande
                     }
                     else        //annars
                     {
-                        swordTime = 0;      //reset cooldown
+                        swordTime1 = 0;      //reset cooldown
                         picture(player1.x-50, player1.y+43, "img/fire_sword_left.png"); //Visa svärdet som vilande
                     }
                 }
@@ -235,6 +251,10 @@
             //Player 1 Health-bar
             rectangle(player1.x - 20, player1.y - 20, 100, 10, "grey");             //Health bar grey background
             rectangle(player1.x - 20, player1.y - 20, player1.health, 10, "green"); //Green health bar
+
+            //Player 2 Health-bar
+            rectangle(player2.x - 20, player2.y - 20, 100, 10, "grey");             //Health bar grey background
+            rectangle(player2.x - 20, player2.y - 20, player2.health, 10, "green"); //Green health bar
 
             //Player two controls
             if (keyboard.up) {player2.y -= player2.speed;}   //Make character go up
@@ -251,20 +271,20 @@
                 if(swordAlive) //När vanligt svärd används
                 {
                     
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (mouse.left && swordTime2 < 5) //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player2.x + 50 , player2.y+75, "img/sword_woosh_right.png");//Visa svärdet som svingat
                         playSound("sfx/sword_woosh.wav", 0.2);//Spela ljud
-                        swordTime ++; //Öka cooldown
+                        swordTime2 ++; //Öka cooldown
                     }
-                    else if (keyboard.space)//Om annars mellanslag är nedtryckt
+                    else if (mouse.left)//Om annars mellanslag är nedtryckt
                     {
-                        swordTime ++; //Öka cooldown 
+                        swordTime2 ++; //Öka cooldown 
                         picture(player2.x + 50, player2.y+43, "img/sword_right.png"); //visa svärdet som vilande
                     }
                     else //annars
                     {
-                        swordTime = 0; //Öka cooldown
+                        swordTime2 = 0; //Öka cooldown
                         picture(player2.x + 50, player2.y+43, "img/sword_right.png"); //visa svärdet som vilande
                     }
                 }
@@ -272,20 +292,20 @@
                 //Fire Sword
                 if (fireSword.equipped) //när eldsvärdet är equipped
                 {
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (mouse.left && swordTime2 < 5) //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player2.x + 50, player2.y+75, "img/fire_sword_woosh_right.png");   //Visa svärdet som svingat
                         playSound("sfx/fire_sword_woosh.mp3", 1);                               //Spela ljud
-                        swordTime++;                                                            //Öka cooldown
+                        swordTime2++;                                                            //Öka cooldown
                     }
-                    else if (keyboard.space)            //Om annars mellanslag är nedtryckt
+                    else if (mouse.left)            //Om annars musen är nedtryckt
                     {
-                        swordTime++;                                                            //Öka cooldown   
+                        swordTime2++;                                                            //Öka cooldown   
                         picture(player2.x + 50, player2.y+43, "img/fire_sword_right.png");         //visa svärdet som vilande
                     }
                     else        //annars
                     {
-                        swordTime = 0;      //reset cooldown
+                        swordTime2 = 0;      //reset cooldown
                         picture(player2.x + 50, player2.y+43, "img/fire_sword_right.png"); //Visa svärdet som vilande
                     }
                 }
@@ -293,25 +313,25 @@
             else 
             {
                 //Rita player 1 riktad åt vänster om D inte trycks ned
-                picture(player2.x, player2.y, "img/player1_left.png");
+                picture(player2.x, player2.y, "img/player2_left.png");
                 
                 //Default Sword
                 if (swordAlive )//när vanligt svärd är equipped
                 {
-                    if (keyboard.space && swordTime < 5)  //om space är nedtryckt och cooldown inte skett
+                    if (mouse.left && swordTime2 < 5)  //om space är nedtryckt och cooldown inte skett
                     {
                         picture(player2.x-50, player2.y+75, "img/sword_woosh_left.png"); //Visa svärdet som svingat
                         playSound("sfx/sword_woosh.wav", 0.2); //Spela ljud
-                        swordTime++; //Öka cooldown
+                        swordTime2++; //Öka cooldown
                     }
-                    else if (keyboard.space) //Om annars mellanslag är nedtryckt
+                    else if (mouse.left) //Om annars musen är nedtryckt
                     {
-                        swordTime++; //Öka cooldown
+                        swordTime2++; //Öka cooldown
                         picture(player2.x-50, player2.y+43, "img/sword_left.png");//visa svärdet som vilande
                     }
                     else //Ananrs
                     {
-                        swordTime = 0; //reset cooldown
+                        swordTime2 = 0; //reset cooldown
                         picture(player2.x-50, player2.y+43, "img/sword_left.png");//visa svärdet som vilande
                     }
                 }
@@ -319,21 +339,21 @@
                 //Fire Sword
                 if (fireSword.equipped) //när eldsvärdet är equipped
                 {
-                    if (keyboard.space && swordTime < 5) //om space är nedtryckt och cooldown inte skett
+                    if (mouse.left && swordTime2 < 5) //om space är nedtryckt och cooldown inte skett
                     {
-                        picture(player1.x-50, player1.y+75, "img/fire_sword_woosh_left.png");   //Visa svärdet som svingat
+                        picture(player2.x-50, player2.y+75, "img/fire_sword_woosh_left.png");   //Visa svärdet som svingat
                         playSound("sfx/fire_sword_woosh.mp3", 1);                               //Spela ljud
-                        swordTime++;                                                            //Öka cooldown
+                        swordTime2++;                                                            //Öka cooldown
                     }
-                    else if (keyboard.space)            //Om annars mellanslag är nedtryckt
+                    else if (mouse.left)            //Om annars mellanslag är nedtryckt
                     {
-                        swordTime++;                                                            //Öka cooldown   
-                        picture(player1.x-50, player1.y+43, "img/fire_sword_left.png");         //visa svärdet som vilande
+                        swordTime2++;                                                            //Öka cooldown   
+                        picture(player2.x-50, player2.y+43, "img/fire_sword_left.png");         //visa svärdet som vilande
                     }
                     else        //annars
                     {
-                        swordTime = 0;      //reset cooldown
-                        picture(player1.x-50, player1.y+43, "img/fire_sword_left.png"); //Visa svärdet som vilande
+                        swordTime2 = 0;      //reset cooldown
+                        picture(player2.x-50, player2.y+43, "img/fire_sword_left.png"); //Visa svärdet som vilande
                     }
                 }
             }
@@ -356,11 +376,11 @@
                     if (swordAlive)//If loop) för att spelaren ska skada zombie med vanligt svärd
                     {
                     
-                        if (distance(player1 , zombie) < 130  && keyboard.space && keyboard.d && zombie.x > player1.x && swordTime < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
+                        if (distance(player1 , zombie) < 130  && keyboard.space && keyboard.d && zombie.x > player1.x && swordTime1 < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
                         {
                             zombie.health -= 5;
                         }
-                        if (distance(player1 , zombie) < 130  && keyboard.space &&  zombie.x < player1.x && swordTime < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
+                        if (distance(player1 , zombie) < 130  && keyboard.space &&  zombie.x < player1.x && swordTime1 < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
                         {
                             zombie.health -= 5;
                         }
@@ -368,20 +388,54 @@
                     if (fireSword.equipped)//If loop) för att spelaren ska skada zombie med eld svärd
                     {
                     
-                        if (distance(player1 , zombie) < 130  && keyboard.space && keyboard.d && zombie.x > player1.x && swordTime < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
+                        if (distance(player1 , zombie) < 130  && keyboard.space && keyboard.d && zombie.x > player1.x && swordTime1 < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
                         {
                             zombie.health -= 15;
                         }
-                        if (distance(player1 , zombie) < 130  && keyboard.space &&  zombie.x < player1.x && swordTime < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
+                        if (distance(player1 , zombie) < 130  && keyboard.space &&  zombie.x < player1.x && swordTime1 < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
                         {
                             zombie.health -= 15;
                         }
                     }
 
-                    if (zombie.health <= 0) //If loop för att zombie ska dö
+                    if (swordAlive)//If loop) för att spelaren ska skada zombie med vanligt svärd
+                    {
+                    
+                        if (distance(player2 , zombie) < 130  && mouse.left && keyboard.right && zombie.x > player2.x && swordTime2 < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
+                        {
+                            zombie.health -= 5;
+                        }
+                        if (distance(player2 , zombie) < 130  && mouse.left &&  zombie.x < player2.x && swordTime2 < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
+                        {
+                            zombie.health -= 5;
+                        }
+                    }
+                    if (fireSword.equipped)//If loop) för att spelaren ska skada zombie med eld svärd
+                    {
+                    
+                        if (distance(player2 , zombie) < 130  && mouse.left && keyboard.right && zombie.x > player2.x && swordTime2 < 5) //Om spelaren är tilltäckligt nära, till vänster om zombien när hen går åt höger och trycker på space samt ingen cooldown kommer hen skada zombien
+                        {
+                            zombie.health -= 15;
+                        }
+                        if (distance(player2 , zombie) < 130  && mouse.left &&  zombie.x < player2.x && swordTime2 < 5) //Om spelaren är tilltäckligt nära, till höger om zombien och trycker på space samt ingen cooldown kommer hen skada zombien
+                        {
+                            zombie.health -= 15;
+                        }
+                    }
+
+                    //Döda zombies och ger poäng
+
+                    if (zombie.health <= 0 && distance(player1 , zombie) < 130 && keyboard.space && swordTime1 < 5) //If loop för att zombie ska dö och för att se till att det var spelare 1 som dödade zombien
                     {
                         zombie.alive = false; //Zombie är inte längre vid liv
                         player1.points += 1;  //Spelaren får en poäng för att ha dödat zombien
+
+                    }
+
+                    else if (zombie.health <= 0 && distance(player2 , zombie) < 130 && mouse.left  && swordTime2 < 5) //If loop för att zombie ska dö och för att se till att det var spelare 2 som dödade zombien
+                    {
+                        zombie.alive = false; //Zombie är inte längre vid liv
+                        player2.points += 1;  //Spelaren får en poäng för att ha dödat zombien
 
                     }
 
@@ -389,7 +443,7 @@
 
                     text(40, 70, 30, "Wave: " + waveNumber, "yellow"); //text för att visa waves
 
-                    if (player1.points == 25 * waveNumber)  //Om spelaren dödat 25*vågnumret spawna nästa wave
+                    if (player1.points + player2.points == 25 * waveNumber)  //Om spelarna dödat 25*vågnumret spawna nästa wave
                     {
                         var i2 = 0;
                         while (i2 < 25) //While loop som pushar nästa wave zombies in i en lista
@@ -397,14 +451,25 @@
                             zombies.push({  x: random(totalWidth), y: random(totalHeight) / 2, speed: random(zombieSpeedMin, zombieSpeedMax) , health: 100 , alive: true});
                             i2++;
                         }
+                        zombieDamage *= 1.05; //öka zombiedamage efter varje runda
                         waveNumber += 1; //gör så att nästa wave presenteras som rätt wave
                     }
 
                     //Zombie movements
-                    if (zombie.x < player1.x){zombie.x += zombie.speed;}    //if the player1 is to the right of the zombie they will move to the right
-                    else {zombie.x -= zombie.speed;}                        //if not they will move to the left
-                    if (zombie.y < player1.y){zombie.y += zombie.speed;}    //if the player1 is below the zombie they will move down
-                    else {zombie.y -= zombie.speed;}                        //if not they will move up
+                    if (distance(player1 , zombie) < distance(player2 , zombie))
+                    {
+                        if (zombie.x < player1.x){zombie.x += zombie.speed;}    //if the player1 is to the right of the zombie they will move to the right
+                        else {zombie.x -= zombie.speed;}                        //if not they will move to the left
+                        if (zombie.y < player1.y){zombie.y += zombie.speed;}    //if the player1 is below the zombie they will move down
+                        else {zombie.y -= zombie.speed;}                        //if not they will move up
+                    }
+                    else
+                    {
+                        if (zombie.x < player2.x){zombie.x += zombie.speed;}    //if the player1 is to the right of the zombie they will move to the right
+                        else {zombie.x -= zombie.speed;}                        //if not they will move to the left
+                        if (zombie.y < player2.y){zombie.y += zombie.speed;}    //if the player1 is below the zombie they will move down
+                        else {zombie.y -= zombie.speed;}                        //if not they will move up
+                    }
 
                     //Zombie Health-bar
                     rectangle(zombie.x - 20, zombie.y - 20, 100, 10, "grey");               //Health bar grey background
@@ -415,13 +480,20 @@
                     //If loop för att zombies ska skada spelaren när spelaren kommer för nära
                     if (distance(player1 , zombie) < 35)
                     {
-                        player1.health -= 1;
+                        player1.health -= zombieDamage;
+                            
+                    }
+                    if (distance(player2 , zombie) < 35)
+                    {
+                        player2.health -= zombieDamage;
                             
                     }
             }
 
                 //Player 1 kills
                 text(totalWidth - 550, 70, 30, "Player 1 kills: " + player1.points, "yellow");  
+                //Player 2 kills
+                text(totalWidth - 550, 120, 30, "Player 2 kills: " + player2.points, "yellow");  
                 
                 //Game over när player 1 health är noll eller mindre
                 if (player1.health <= 0)
@@ -431,6 +503,13 @@
                     stopUpdate();                                                           //Avslutar update funktionen
                 }
 
+                //Game over när player 2 health är noll eller mindre
+                if (player2.health <= 0)
+                {
+                    playSound("sfx/player_ouch.mp3", 1);                                    //Ouch sound effect
+                    text(totalWidth / 2 - 210, totalHeight/2, 60, "GAME OVER", "yellow");   //Game over text
+                    stopUpdate();                                                           //Avslutar update funktionen
+                }
                 
                 i++;
             }
